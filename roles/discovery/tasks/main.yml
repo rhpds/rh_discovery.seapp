@@ -1,6 +1,6 @@
 ---
 - name: Enable repository
-  ansible.builtin.shell: >-
+  ansible.builtin.command: >-
     subscription-manager repos
     --enable discovery-1-for-rhel-9-x86_64-rpms
 
@@ -10,6 +10,15 @@
     state: present
   disable_gpg_check: yes
 
-  3 podman login registry.redhat.io
-  4 discovery-installer install
-  5 systemctl --user start discovery-app
+- name: Log in to Red Hat registry
+  containers.podman.podman_login:
+    registry: registry.redhat.io
+    username: "{{ rh_discovery_seapp_discovery_registry_username }}"
+    password: "{{ rh_discovery_seapp_discovery_registry_password }}"
+
+- name: Run discovery-installer
+  command: discovery-installer install
+
+- name: Start discovery app as user service
+  become: false
+  command: systemctl --user start discovery-app

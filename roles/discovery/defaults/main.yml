@@ -1,1 +1,6 @@
 ---
+# ----------------------------------------------------------------
+# Red Hat registry username and password
+# ----------------------------------------------------------------
+rh_discovery_seapp_discovery_registry_username: "{{ registry_credentials_username }}"
+rh_discovery_seapp_discovery_registry_password: "{{ registry_credentials_password }}"
