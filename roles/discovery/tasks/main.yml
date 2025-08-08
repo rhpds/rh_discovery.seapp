@@ -1,35 +1,15 @@
 ---
-- name: Install packages
+- name: Enable repository
+  ansible.builtin.shell: >-
+    subscription-manager repos
+    --enable discovery-1-for-rhel-9-x86_64-rpms
+
+- name: Install discovery installer
   ansible.builtin.package:
-    name:
-      - rhc-worker-playbook
-      - yara
-      - scap-security-guide
-      - postgresql-server
+    name: discovery-installer
     state: present
+  disable_gpg_check: yes
 
-- name: Run PostgreSQL
-  ansible.builtin.include_tasks:
-    file: pgsql.yml
-
-- name: Include user settings
-  ansible.builtin.include_tasks:
-    file: user.yml
-
-- name: Include un register host
-  ansible.builtin.include_tasks:
-    file: unsubscribe.yml
-
-- name: Include register with private satellite
-  when: "lb1152_hol_node_config_subscription_type == 'satellite'"
-  ansible.builtin.include_tasks:
-    file: subscribe.yml
-
-- name: Include subscription with RHSM
-  when: "lb1152_hol_node_config_subscription_type == 'rhsm'"
-  ansible.builtin.include_tasks:
-    file: rhsm.yml
-
-- name: Include register with insights
-  ansible.builtin.include_tasks:
-    file: insights.yml
+  3 podman login registry.redhat.io
+  4 discovery-installer install
+  5 systemctl --user start discovery-app
