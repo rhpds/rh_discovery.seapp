@@ -1,35 +1,10 @@
 ---
-- name: Install packages
-  ansible.builtin.package:
-    name:
-      - rhc-worker-playbook
-      - yara
-      - scap-security-guide
-      - postgresql-server
-    state: present
-
-- name: Run PostgreSQL
-  ansible.builtin.include_tasks:
-    file: pgsql.yml
-
-- name: Include user settings
-  ansible.builtin.include_tasks:
-    file: user.yml
-
-- name: Include un register host
+- name: Include node unregister tasks
+  when: rh_discovery_seapp_node_unsubscribe | bool
   ansible.builtin.include_tasks:
     file: unsubscribe.yml
 
-- name: Include register with private satellite
-  when: "lb1152_hol_node_config_subscription_type == 'satellite'"
+- name: Include node subscription tasks
+  when: rh_discovery_seapp_node_subscribe | bool
   ansible.builtin.include_tasks:
     file: subscribe.yml
-
-- name: Include subscription with RHSM
-  when: "lb1152_hol_node_config_subscription_type == 'rhsm'"
-  ansible.builtin.include_tasks:
-    file: rhsm.yml
-
-- name: Include register with insights
-  ansible.builtin.include_tasks:
-    file: insights.yml

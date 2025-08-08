@@ -1,22 +1,13 @@
 ---
+# ----------------------------------------------------------------
+# Variables to unregister the host
+# ----------------------------------------------------------------
+rh_discovery_seapp_node_unsubscribe: true
 
 # ----------------------------------------------------------------
-# User's Variables
+# Variables to subscribe the host
 # ----------------------------------------------------------------
-lb1152_hol_node_config_lab_user: "{{ student_name }}"
-
-# ----------------------------------------------------------------
-# Satellite Variables
-# ----------------------------------------------------------------
-# lb1152_hol_node_config_subscription_type: (satellite/rhsm)
-lb1152_hol_node_config_subscription_type: satellite
-
-lb1152_hol_node_config_sat_hostname: <CHANGEME>
-lb1152_hol_node_config_sat_org: <CHANGEME>
-lb1152_hol_node_config_sat_activation_key: <CHANGEME>
-
-# ----------------------------------------------------------------
-# Red Hat Insights Variables
-# ----------------------------------------------------------------
-lb1152_hol_node_config_insights_org: <CHANGEME>
-lb1152_hol_node_config_insights_activation_key: <CHANGEME>
+rh_discovery_seapp_node_subscribe: true
+rh_discovery_seapp_node_satellite_hostname: "satellite.example.com"
+rh_discovery_seapp_node_satellite_organization: Default_Organization
+rh_discovery_seapp_node_satellite_activation_key: <CHANGEME>
