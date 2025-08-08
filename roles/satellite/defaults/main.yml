@@ -1,0 +1,46 @@
+---
+# ----------------------------------------------------------------
+# Default and common variables
+# ----------------------------------------------------------------
+rh_discovery_seapp_satellite_default_organization: "Default Organization"
+rh_discovery_seapp_satellite_user_password: <CHANGEME>
+rh_discovery_seapp_satellite_external_fqdn: "{{ groups['satellites'][0].split('.')[0] }}.{{ subdomain_base }}"
+
+# ----------------------------------------------------------------
+# Variables: to set host users
+# ----------------------------------------------------------------
+rh_discovery_seapp_satellite_set_hostuser: true
+rh_discovery_seapp_satellite_lab_user: "{{ student_name }}"
+rh_discovery_seapp_satellite_authorised_keys_host_list: "{{ groups['nodes'] }}"
+
+# ----------------------------------------------------------------
+# Variables: to reset admin password
+# ----------------------------------------------------------------
+rh_discovery_seapp_satellite_reset_password: true
+# Common variable
+# rh_discovery_seapp_satellite_user_password: <CHANGEME>
+
+# ----------------------------------------------------------------
+# Variables: to update satellite hostname
+# ----------------------------------------------------------------
+rh_discovery_seapp_satellite_update_hostname: true
+rh_discovery_seapp_satellite_internal_fqdn: satellite.example.com
+rh_discovery_seapp_satellite_user_name: admin
+# Common variable
+# rh_discovery_seapp_satellite_user_password: <CHANGEME>
+# rh_discovery_seapp_satellite_external_fqdn: "{{ groups['satellites'][0].split('.')[0] }}.{{ subdomain_base }}"
+
+# ----------------------------------------------------------------
+# Variables: to create LeCertificate
+# ----------------------------------------------------------------
+rh_discovery_seapp_satellite_create_lecertificate: true
+# Common variable
+# rh_discovery_seapp_satellite_external_fqdn: "{{ groups['satellites'][0].split('.')[0] }}.{{ subdomain_base }}"
+
+# ----------------------------------------------------------------
+# Variables: to replace satellite manifest
+# ----------------------------------------------------------------
+rh_discovery_seapp_satellite_replace_manifest: false
+rh_discovery_seapp_satellite_manifest_url: "<CHANGEME>https://example.com/path/to/new_manifest.zip<CHANGEME>"
+rh_discovery_seapp_satellite_manifest_dest: "/tmp/new_manifest.zip"
+

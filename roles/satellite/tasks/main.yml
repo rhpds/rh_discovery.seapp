@@ -1,0 +1,32 @@
+---
+- name: Include user settings tasks
+  when: rh_discovery_seapp_satellite_set_hostuser | bool
+  ansible.builtin.include_tasks:
+    file: user.yml
+
+- name: Include reset admin password tasks
+  when: rh_discovery_seapp_satellite_reset_password | bool
+  ansible.builtin.include_tasks:
+    file: password.yml
+
+- name: Include update satellite hostname tasks
+  when: rh_discovery_seapp_satellite_update_hostname | bool
+  ansible.builtin.include_tasks:
+    file: hostname.yml
+
+- name: Include LeCertificate for satellite
+  when: rh_discovery_seapp_satellite_create_lecertificate | bool
+  ansible.builtin.include_tasks:
+    file: lecertificate.yml
+
+- name: Include replace satellite manifest tasks
+  when: rh_discovery_seapp_satellite_replace_manifest | bool
+  ansible.builtin.include_tasks:
+    file: manifest.yml
+
+- name: Refresh the manifest
+  when: not rh_discovery_seapp_satellite_replace_manifest | bool
+  ansible.builtin.command: >-
+    hammer subscription 
+    refresh-manifest
+    --organization="Default Organization"'

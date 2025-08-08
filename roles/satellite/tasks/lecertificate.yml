@@ -33,7 +33,7 @@
             --rsa-key-size 4096 \
             --no-bootstrap \
             --standalone \
-            -d "{{ lb1152_hol_satellite_reconfigure_external_fqdn }}" \
+            -d "{{ rh_discovery_seapp_satellite_external_fqdn }}" \
             --email ansible-network@redhat.com \
             --noninteractive \
             --agree-tos
@@ -54,7 +54,7 @@
 - name: Download LetsEncrypt CA certs
   ansible.builtin.get_url:
     url: "{{ item.url }}"
-    dest: "/etc/letsencrypt/live/{{ lb1152_hol_satellite_reconfigure_external_fqdn }}"
+    dest: "/etc/letsencrypt/live/{{ rh_discovery_seapp_satellite_external_fqdn }}"
     mode: 0644
     checksum: "{{ item.checksum }}"
     group: root
@@ -69,17 +69,17 @@
 
 - name: Retrieve LetsEncrypt R10 cert
   ansible.builtin.slurp:
-    src: "/etc/letsencrypt/live/{{ lb1152_hol_satellite_reconfigure_external_fqdn }}/r10.pem"
+    src: "/etc/letsencrypt/live/{{ rh_discovery_seapp_satellite_external_fqdn }}/r10.pem"
   register: intermediate_cert_r10
 
 - name: Retrieve LetsEncrypt R11 cert
   ansible.builtin.slurp:
-    src: "/etc/letsencrypt/live/{{ lb1152_hol_satellite_reconfigure_external_fqdn }}/r11.pem"
+    src: "/etc/letsencrypt/live/{{ rh_discovery_seapp_satellite_external_fqdn }}/r11.pem"
   register: intermediate_cert_r11
 
 - name: Retrieve LetsEncrypt root X1 cert
   ansible.builtin.slurp:
-    src: "/etc/letsencrypt/live/{{ lb1152_hol_satellite_reconfigure_external_fqdn }}/isrgrootx1.pem"
+    src: "/etc/letsencrypt/live/{{ rh_discovery_seapp_satellite_external_fqdn }}/isrgrootx1.pem"
   register: root_cert
 
 - name: Combine R10, R11 and root X1 certs to create Letsencrypt CA bundle
@@ -88,7 +88,7 @@
       {{ root_cert.content|b64decode }}
       {{ intermediate_cert_r10.content | b64decode }}
       {{ intermediate_cert_r11.content | b64decode }}
-    dest: "/etc/letsencrypt/live/{{ lb1152_hol_satellite_reconfigure_external_fqdn }}/letsencrypt-ca-bundle.pem"
+    dest: "/etc/letsencrypt/live/{{ rh_discovery_seapp_satellite_external_fqdn }}/letsencrypt-ca-bundle.pem"
 
 - name: Start httpd
   ansible.builtin.service:
@@ -126,9 +126,9 @@
 - name: Update satellite with LetsEncrypt cert and enable registration and template modules
   ansible.builtin.shell: >-
     satellite-installer --scenario satellite
-    --certs-server-cert "/etc/letsencrypt/live/{{ lb1152_hol_satellite_reconfigure_external_fqdn }}/fullchain.pem"
-    --certs-server-key "/etc/letsencrypt/live/{{ lb1152_hol_satellite_reconfigure_external_fqdn }}/privkey.pem"
-    --certs-server-ca-cert "/etc/letsencrypt/live/{{ lb1152_hol_satellite_reconfigure_external_fqdn }}/letsencrypt-ca-bundle.pem"
+    --certs-server-cert "/etc/letsencrypt/live/{{ rh_discovery_seapp_satellite_external_fqdn }}/fullchain.pem"
+    --certs-server-key "/etc/letsencrypt/live/{{ rh_discovery_seapp_satellite_external_fqdn }}/privkey.pem"
+    --certs-server-ca-cert "/etc/letsencrypt/live/{{ rh_discovery_seapp_satellite_external_fqdn }}/letsencrypt-ca-bundle.pem"
     --certs-update-server --certs-update-server-ca
     --foreman-proxy-registration true
     --foreman-proxy-templates true

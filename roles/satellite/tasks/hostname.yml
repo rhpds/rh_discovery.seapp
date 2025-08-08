@@ -1,0 +1,30 @@
+---
+- name: Remove old satelite entry from /etc/hosts
+  ansible.builtin.lineinfile:
+    dest: /etc/hosts
+    regexp: '.*satellite.example.com'
+    state: absent
+
+- name: Gather host ip address
+  ansible.builtin.set_fact:
+    host_ip: "{{ ansible_default_ipv4.address }}"
+
+- name: Update hostname in /etc/hosts
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "{{ host_ip }} {{ rh_discovery_seapp_satellite_internal_fqdn }}"
+    state: present
+    create: true
+
+- name: Update hostname using hostnamectl
+  ansible.builtin.command: >-
+    hostnamectl set-hostname {{ rh_discovery_seapp_satellite_internal_fqdn }}
+
+- name: Update satellite hostname 
+  ansible.builtin.shell: >-
+    satellite-change-hostname
+    {{ rh_discovery_seapp_satellite_external_fqdn }}
+    -u {{ rh_discovery_seapp_satellite_user_name }}
+    -p {{ rh_discovery_seapp_satellite_user_password }} --skip-dns --assumeyes
+  register: satellite_change_hostname
+  failed_when: '"Success!" not in satellite_change_hostname.stdout'

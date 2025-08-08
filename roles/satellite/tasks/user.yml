@@ -1,7 +1,7 @@
 ---
 - name: Copy SSH files
   ansible.builtin.copy:
-    src: "/home/{{ lb1152_hol_satellite_reconfigure_lab_user }}/.ssh/{{ item }}"
+    src: "/home/{{ rh_discovery_seapp_satellite_lab_user }}/.ssh/{{ item }}"
     dest: /root/.ssh/
     remote_src: true
     owner: root
@@ -13,7 +13,7 @@
 
 - name: Copy private ssh key
   ansible.builtin.copy:
-    src: "/home/{{ lb1152_hol_satellite_reconfigure_lab_user }}/.ssh/{{ guid }}key.pem"
+    src: "/home/{{ rh_discovery_seapp_satellite_lab_user }}/.ssh/{{ guid }}key.pem"
     dest: /root/.ssh/
     remote_src: true
     owner: root
@@ -64,11 +64,7 @@
     path: /root/.ssh/authorized_keys
     insertafter: 'EOF'
     line: "{{ foreman_proxy_ssh_pub_key_content }}"
-  delegate_to: "{{ groups['nodes'][0] }}"
-
-- name: Inset publickey in authorized_keys
-  ansible.builtin.lineinfile:
-    path: /root/.ssh/authorized_keys
-    insertafter: 'EOF'
-    line: "{{ foreman_proxy_ssh_pub_key_content }}"
-  delegate_to: "{{ groups['nodes'][1] }}"
+  delegate_to: "{{ _satellite_host_ }}"
+  loop: "{{ rh_discovery_seapp_satellite_authorised_keys_host_list }}"
+  loop_control:
+    loop_var: _satellite_host_

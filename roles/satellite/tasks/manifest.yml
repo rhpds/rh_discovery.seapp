@@ -1,0 +1,33 @@
+---
+- name: Download new manifest file
+  ansible.builtin.get_url:
+    url: "{{ rh_discovery_seapp_satellite_manifest_url }}"
+    dest: "{{ rh_discovery_seapp_satellite_manifest_dest }}"
+    mode: '0644'
+    force: yes
+
+- name: Remove old manifest
+  ansible.builtin.command: >-
+    hammer subscription delete
+    --organization {{ rh_discovery_seapp_satellite_default_organization }}
+  register: delete_result
+  ignore_errors: true
+  changed_when: "'Deleted' in delete_result.stdout"
+
+- name: Import the new manifest
+  ansible.builtin.command: >-
+    hammer subscription upload
+    --organization {{ rh_discovery_seapp_satellite_default_organization }}
+    --file {{ rh_discovery_seapp_satellite_manifest_dest }}
+  register: import_result
+  changed_when: "'uploaded' in import_result.stdout"
+
+- name: Cleanup - remove manifest from tmp
+  ansible.builtin.file:
+    path: "{{ rh_discovery_seapp_satellite_manifest_dest }}"
+    state: absent
+
+- name: Refresh the manifest
+  ansible.builtin.command: >-
+    hammer subscription refresh-manifest
+    --organization={{ rh_discovery_seapp_satellite_default_organization }}
