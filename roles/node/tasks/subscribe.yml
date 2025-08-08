@@ -1,9 +1,25 @@
 ---
+- name: Download katello-ca-consumer RPM
+  ansible.builtin.get_url:
+    url: "http://{{ rh_discovery_seapp_node_satellite_hostname }}/pub/katello-ca-consumer-latest.noarch.rpm"
+    dest: "/tmp/katello-ca-consumer-latest.noarch.rpm"
+    mode: '0644'
+
 - name: Install katello-ca-consumer RPM
-  ansible.builtin.shell: >-
-    dnf install
-    http://{{ rh_discovery_seapp_node_satellite_hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
-    -y
+  ansible.builtin.package:
+    name: "/tmp/katello-ca-consumer-latest.noarch.rpm"
+    state: present
+
+- name: Cleanup - remove rpm from tmp
+  ansible.builtin.file:
+    path: "/tmp/katello-ca-consumer-latest.noarch.rpm"
+    state: absent
+
+# - name: Install katello-ca-consumer RPM
+#   ansible.builtin.shell: >-
+#     dnf install
+#     http://{{ rh_discovery_seapp_node_satellite_hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
+#     -y
 
 - name: Register Nodes to Satellite
   ansible.builtin.shell: >-
