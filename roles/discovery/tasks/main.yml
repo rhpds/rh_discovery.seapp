@@ -8,7 +8,7 @@
   ansible.builtin.package:
     name: discovery-installer
     state: present
-  disable_gpg_check: yes
+    disable_gpg_check: yes
 
 - name: Log in to Red Hat registry
   become: false
