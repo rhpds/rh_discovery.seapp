@@ -29,4 +29,4 @@
   ansible.builtin.command: >-
     hammer subscription 
     refresh-manifest
-    --organization="Default Organization"'
+    --organization="Default Organization"
