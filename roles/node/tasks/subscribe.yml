@@ -28,5 +28,5 @@
 - name: Register Nodes to Satellite
   ansible.builtin.shell: >-
     subscription-manager register
-    --org "{{ rh_discovery_seapp_node_satellite_organization }}"
-    --activationkey "{{ rh_discovery_seapp_node_satellite_activation_key }}"
+    --org {{ rh_discovery_seapp_node_satellite_organization }}
+    --activationkey {{ rh_discovery_seapp_node_satellite_activation_key }}
