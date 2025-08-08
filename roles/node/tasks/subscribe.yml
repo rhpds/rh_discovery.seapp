@@ -9,6 +9,7 @@
   ansible.builtin.package:
     name: "/tmp/katello-ca-consumer-latest.noarch.rpm"
     state: present
+  disable_gpg_check: yes
 
 - name: Cleanup - remove rpm from tmp
   ansible.builtin.file:
