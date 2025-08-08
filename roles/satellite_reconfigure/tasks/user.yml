@@ -1,0 +1,74 @@
+---
+- name: Copy SSH files
+  ansible.builtin.copy:
+    src: "/home/{{ lb1152_hol_satellite_reconfigure_lab_user }}/.ssh/{{ item }}"
+    dest: /root/.ssh/
+    remote_src: true
+    owner: root
+    group: root
+  loop:
+    - authorized_keys
+    - "{{ guid }}key.pub"
+    - config
+
+- name: Copy private ssh key
+  ansible.builtin.copy:
+    src: "/home/{{ lb1152_hol_satellite_reconfigure_lab_user }}/.ssh/{{ guid }}key.pem"
+    dest: /root/.ssh/
+    remote_src: true
+    owner: root
+    group: root
+    mode: 0400
+
+- name: Add root user in config
+  ansible.builtin.lineinfile:
+    regexp: ".*User ec2-user$"
+    line: "  User root"
+    path: /root/.ssh/config
+
+- name: Copy ansible.cfg
+  ansible.builtin.copy:
+    src: ansible.cfg
+    dest: /etc/foreman-proxy/ansible.cfg
+    owner: root
+    group: foreman-proxy
+    mode: u+rw,g+rw,o+r
+
+- name: Set temp access
+  ansible.builtin.file:
+    path: /var/lib/foreman-proxy/ssh
+    state: directory
+    mode: u+rwx,g+rx,o+rx
+
+- name: Read content of the file
+  ansible.builtin.slurp:
+    src: /var/lib/foreman-proxy/ssh/id_rsa_foreman_proxy.pub
+  register: foreman_proxy_ssh_pub_key
+
+- name: Read ssh publickey
+  ansible.builtin.set_fact:
+    foreman_proxy_ssh_pub_key_content: "{{ foreman_proxy_ssh_pub_key['content'] | b64decode }}"
+
+- name: Remove temp access
+  ansible.builtin.file:
+    path: /var/lib/foreman-proxy/ssh
+    state: directory
+    mode: u+rwx,g-rx,o-rx
+
+- name: Print key
+  ansible.builtin.debug:
+    msg: "{{ foreman_proxy_ssh_pub_key_content }}"
+
+- name: Inset publickey in authorized_keys
+  ansible.builtin.lineinfile:
+    path: /root/.ssh/authorized_keys
+    insertafter: 'EOF'
+    line: "{{ foreman_proxy_ssh_pub_key_content }}"
+  delegate_to: "{{ groups['nodes'][0] }}"
+
+- name: Inset publickey in authorized_keys
+  ansible.builtin.lineinfile:
+    path: /root/.ssh/authorized_keys
+    insertafter: 'EOF'
+    line: "{{ foreman_proxy_ssh_pub_key_content }}"
+  delegate_to: "{{ groups['nodes'][1] }}"

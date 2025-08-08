@@ -1,0 +1,25 @@
+---
+- name: Remove old image tar file
+  ansible.builtin.file:
+    path: "{{ lb1152_hol_satellite_reconfigure_iop_image_tar_path }}"
+    state: absent
+  ignore_errors: true
+
+- name: Remove existing iop advisor image
+  containers.podman.podman_image:
+    name: "registry.stage.redhat.io/satellite/iop-advisor-engine-rhel9"
+    tag: "latest"
+    state: absent
+
+- name: Pull iop advisor image
+  containers.podman.podman_image:
+    name: "{{ lb1152_hol_satellite_reconfigure_iop_image }}"
+    tag: "{{ lb1152_hol_satellite_reconfigure_iop_image_tag }}"
+    username: "{{ lb1152_hol_satellite_reconfigure_registry_username }}"
+    password: "{{ lb1152_hol_satellite_reconfigure_registry_password }}"
+
+- name: Retag iop advisor image as latest
+  containers.podman.podman_tag:
+    image: "{{ lb1152_hol_satellite_reconfigure_iop_image }}:{{ lb1152_hol_satellite_reconfigure_iop_image_tag }}"
+    target_names:
+      - "{{ lb1152_hol_satellite_reconfigure_iop_stage_image }}:{{ lb1152_hol_satellite_reconfigure_iop_stage_image_tag }}"

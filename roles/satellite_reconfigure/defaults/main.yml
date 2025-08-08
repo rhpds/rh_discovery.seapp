@@ -1,0 +1,48 @@
+---
+# ----------------------------------------------------------------
+# User's Variables
+# ----------------------------------------------------------------
+lb1152_hol_satellite_reconfigure_lab_user: "{{ student_name }}"
+
+# ----------------------------------------------------------------
+# Default Variables
+# ----------------------------------------------------------------
+lb1152_hol_satellite_reconfigure_external_fqdn: "{{ groups['satellites'][0].split('.')[0] }}.{{ subdomain_base }}"
+lb1152_hol_satellite_reconfigure_internal_fqdn: satellite.example.com
+lb1152_hol_satellite_reconfigure_user_name: admin
+lb1152_hol_satellite_reconfigure_user_password: <CHANGEME>
+
+# ----------------------------------------------------------------
+# Reconfigure satellite bool variables
+# ----------------------------------------------------------------
+lb1152_hol_satellite_reconfigure_reset_password: true
+lb1152_hol_satellite_reconfigure_update_hostname: true
+lb1152_hol_satellite_reconfigure_lecertificate: true
+
+# ----------------------------------------------------------------
+# Reconfigure satellite manifest
+# ----------------------------------------------------------------
+lb1152_hol_satellite_reconfigure_replace_manifest: true
+lb1152_hol_satellite_reconfigure_manifest_url: "<CHANGEME>https://example.com/path/to/new_manifest.zip<CHANGEME>"
+lb1152_hol_satellite_reconfigure_manifest_dest: "/tmp/new_manifest.zip"
+
+# ----------------------------------------------------------------
+# Register satellite with RHSM
+# ----------------------------------------------------------------
+lb1152_hol_satellite_reconfigure_subscription_type: rhsm
+lb1152_hol_satellite_reconfigure_sat_org: "{{ lb1152_hol_node_config_sat_org }}"
+lb1152_hol_satellite_reconfigure_sat_activation_key: "{{ lb1152_hol_node_config_sat_activation_key }}"
+lb1152_hol_satellite_reconfigure_insights_org: "{{ lb1152_hol_node_config_insights_org }}"
+lb1152_hol_satellite_reconfigure_insights_activation_key: "{{ lb1152_hol_node_config_insights_activation_key }}"
+
+# ----------------------------------------------------------------
+# iop Variables
+# ----------------------------------------------------------------
+lb1152_hol_satellite_reconfigure_iop_download_new_image: false
+lb1152_hol_satellite_reconfigure_iop_image_tar_path: /home/ec2-user/iop-advisor-engine-rhel9-2.tar
+lb1152_hol_satellite_reconfigure_iop_image: registry.redhat.io/satellite/iop-advisor-engine-rhel9
+lb1152_hol_satellite_reconfigure_iop_image_tag: 27eaac9b93113fd78a8932d112d9d37b940e337207df25f03ead05fffcf6be55
+lb1152_hol_satellite_reconfigure_iop_stage_image: registry.stage.redhat.io/satellite/iop-advisor-engine-rhel9
+lb1152_hol_satellite_reconfigure_iop_stage_image_tag: latest
+lb1152_hol_satellite_reconfigure_registry_username: "{{ registry_credentials_username }}"
+lb1152_hol_satellite_reconfigure_registry_password: "{{ registry_credentials_password }}"

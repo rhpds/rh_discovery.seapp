@@ -1,0 +1,10 @@
+---
+- name: Initialize the db
+  ansible.builtin.command: >-
+    /usr/bin/postgresql-setup --initdb
+
+- name: Enable and start the postgresql service
+  ansible.builtin.service:
+    name: postgresql
+    enabled: true
+    state: started

@@ -1,0 +1,16 @@
+---
+- name: Install katello-ca-consumer RPM
+  ansible.builtin.shell: >-
+    dnf install
+    http://{{ lb1152_hol_node_config_sat_hostname }}/pub/katello-ca-consumer-latest.noarch.rpm
+    -y
+
+- name: Register Nodes to Satellite
+  ansible.builtin.shell: >-
+    subscription-manager config --rhsm.manage_repos=1
+
+- name: Register Nodes to Satellite
+  ansible.builtin.shell: >-
+    subscription-manager register
+    --org "{{ lb1152_hol_node_config_sat_org }}"
+    --activationkey "{{ lb1152_hol_node_config_sat_activation_key }}"
