@@ -1,5 +1,10 @@
 ---
 # ----------------------------------------------------------------
+# Red Hat Discovery LeCertificate
+# ----------------------------------------------------------------
+rh_discovery_seapp_discovery_host_fqdn: "{{ groups['bastions'][0].split('.')[0] }}.{{ subdomain_base }}"
+
+# ----------------------------------------------------------------
 # Red Hat registry username and password
 # ----------------------------------------------------------------
 rh_discovery_seapp_discovery_registry_username: "{{ registry_credentials_username }}"

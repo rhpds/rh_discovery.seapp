@@ -22,6 +22,10 @@
     responses:
       (?i)password: "{{ rh_discovery_seapp_discovery_password }}"
 
+- name: Include LeCertificate tasks
+  ansible.builtin.include_tasks:
+    file: lecertificate.yml
+
 - name: "Enable linger for the discovery user"
   ansible.builtin.command: "loginctl enable-linger {{ rh_discovery_seapp_discovery_username }}"
   become: true

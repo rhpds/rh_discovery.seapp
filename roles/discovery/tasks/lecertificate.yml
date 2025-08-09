@@ -1,0 +1,47 @@
+---
+- name: Create letsencrypt subdirectories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: u+rwx,g+rx,o-rwx
+  loop:
+    - /etc/letsencrypt
+    - /var/lib/letsencrypt
+
+- name: Issue SSL cert
+  ansible.builtin.shell: >
+    podman run -it --rm --name certbot \
+        -v "/etc/letsencrypt:/etc/letsencrypt:Z" \
+        -v "/var/lib/letsencrypt:/var/lib/letsencrypt:Z" \
+        -p 80:80 \
+        -p 443:443 \
+        docker.io/certbot/certbot:latest certonly \
+        --key-type rsa \
+        --rsa-key-size 4096 \
+        --no-bootstrap \
+        --standalone \
+        -d "{{ rh_discovery_seapp_discovery_host_fqdn }}" \
+        --email ansible-network@redhat.com \
+        --noninteractive \
+        --agree-tos
+  register: _r_issue_sat_cert
+  until: _r_issue_sat_cert is not failed
+  retries: 5
+
+- name: Copy LeCertificate Private key
+  ansible.builtin.copy:
+    src: /etc/letsencrypt/live/{{ rh_discovery_seapp_discovery_host_fqdn }}/privkey.pem
+    dest: /home/{{ rh_discovery_seapp_discovery_username }}/.local/share/discovery/certs/server.key
+    remote_src: true
+    owner: "{{ rh_discovery_seapp_discovery_username }}"
+    mode: u+rw,g-rwx,o-rwx
+
+- name: Copy LeCertificate Certificate
+  ansible.builtin.copy:
+    src: /etc/letsencrypt/live/{{ rh_discovery_seapp_discovery_host_fqdn }}/fullchain.pem
+    dest: /home/{{ rh_discovery_seapp_discovery_username }}/.local/share/discovery/certs/server.crt
+    remote_src: true
+    owner: "{{ rh_discovery_seapp_discovery_username }}"
+    mode: u+rw,g+r,o+r
