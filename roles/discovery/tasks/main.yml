@@ -49,16 +49,16 @@
     _discovery_user_id: "{{ _r_getent_passwd.ansible_facts.getent_passwd[rh_discovery_seapp_discovery_username][1] }}"
 
 - name: Manage user systemd service with become
-  ansible.builtin.systemd:
-    name: podman.socket
-    state: started
-    enabled: true
-    scope: user
   become: true
   become_user: "{{ rh_discovery_seapp_discovery_username }}"
   environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ _discovery_user_id }}/"
-    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ _discovery_user_id }}/bus"
+    XDG_RUNTIME_DIR: /run/user/{{ _discovery_user_id }}/
+    DBUS_SESSION_BUS_ADDRESS: /run/user/{{ _discovery_user_id }}/bus
+  ansible.builtin.systemd:
+    name: podman.socket
+    scope: user
+    state: started
+    enabled: true
 
 - name: Start discovery app as user service
   become: true
@@ -70,3 +70,4 @@
     name: discovery-app
     scope: user
     state: started
+    enabled: true
