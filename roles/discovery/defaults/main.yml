@@ -11,6 +11,7 @@ rh_discovery_seapp_discovery_registry_password: "{{ registry_credentials_passwor
 rh_discovery_seapp_discovery_packages:
   - discovery-installer
   - discovery-cli
+  - python3-pexpect
 
 # ----------------------------------------------------------------
 # Red Hat Discovery images list
