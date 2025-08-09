@@ -57,10 +57,16 @@
   become: true
   become_user: "{{ rh_discovery_seapp_discovery_username }}"
   environment:
-    XDG_RUNTIME_DIR: "/run/user/{{ _discovery_user_id }}"
+    XDG_RUNTIME_DIR: "/run/user/{{ _discovery_user_id }}/"
     DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ _discovery_user_id }}/bus"
 
 - name: Start discovery app as user service
   become: true
   become_user: "{{ rh_discovery_seapp_discovery_username }}"
-  command: systemctl --user start discovery-app
+  environment:
+    XDG_RUNTIME_DIR: /run/user/{{ _discovery_user_id }}/
+    DBUS_SESSION_BUS_ADDRESS: /run/user/{{ _discovery_user_id }}/bus
+  ansible.builtin.systemd:
+    name: discovery-app
+    scope: user
+    state: started
