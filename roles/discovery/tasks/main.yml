@@ -6,6 +6,8 @@
     disable_gpg_check: yes
 
 - name: Pull Red Hat discovery images
+  become: true
+  become_user: "{{ rh_discovery_seapp_discovery_username }}"
   containers.podman.podman_image:
     name: "{{ _discovery_image_ }}"
     username: "{{ rh_discovery_seapp_discovery_registry_username }}"
@@ -15,7 +17,7 @@
     loop_var: _discovery_image_
 
 - name: Run discovery-installer
-  become: false
+  become: true
   become_user: "{{ rh_discovery_seapp_discovery_username }}"
   ansible.builtin.expect:
     command: discovery-installer install
@@ -27,8 +29,8 @@
     file: lecertificate.yml
 
 - name: "Enable linger for the discovery user"
-  ansible.builtin.command: "loginctl enable-linger {{ rh_discovery_seapp_discovery_username }}"
   become: true
+  ansible.builtin.command: "loginctl enable-linger {{ rh_discovery_seapp_discovery_username }}"
   changed_when: true
 
 - name: Get userinfo of RH Discovery user
@@ -54,6 +56,6 @@
     DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ _discovery_user_id }}/bus"
 
 - name: Start discovery app as user service
-  become: false
+  become: true
   become_user: "{{ rh_discovery_seapp_discovery_username }}"
   command: systemctl --user start discovery-app
