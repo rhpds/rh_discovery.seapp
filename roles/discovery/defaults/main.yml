@@ -4,3 +4,19 @@
 # ----------------------------------------------------------------
 rh_discovery_seapp_discovery_registry_username: "{{ registry_credentials_username }}"
 rh_discovery_seapp_discovery_registry_password: "{{ registry_credentials_password }}"
+
+# ----------------------------------------------------------------
+# Red Hat Discovery pacakges list
+# ----------------------------------------------------------------
+rh_discovery_seapp_discovery_packages:
+  - discovery-installer
+  - discovery-cli
+
+# ----------------------------------------------------------------
+# Red Hat Discovery images list
+# ----------------------------------------------------------------
+rh_discovery_seapp_discovery_images:
+  - registry.redhat.io/discovery/discovery-server-rhel9:1.14
+  - registry.redhat.io/discovery/discovery-ui-rhel9:1.14
+  - registry.redhat.io/rhel9/redis-7:latest
+  - registry.redhat.io/rhel9/postgresql-15:latest
