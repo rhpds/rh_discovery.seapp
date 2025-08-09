@@ -48,7 +48,7 @@
   set_fact:
     _discovery_user_id: "{{ _r_getent_passwd.ansible_facts.getent_passwd[rh_discovery_seapp_discovery_username][1] }}"
 
-- name: Manage user systemd service with become
+- name: Start podman.socket as user service
   become: true
   become_user: "{{ rh_discovery_seapp_discovery_username }}"
   environment:
@@ -60,7 +60,7 @@
     state: started
     enabled: true
 
-- name: Start discovery app as user service
+- name: Start discovery-app as user service
   become: true
   become_user: "{{ rh_discovery_seapp_discovery_username }}"
   environment:
