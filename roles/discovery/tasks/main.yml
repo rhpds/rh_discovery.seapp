@@ -5,6 +5,11 @@
     state: present
     disable_gpg_check: yes
 
+- name: "Enable linger for the discovery user"
+  become: true
+  ansible.builtin.command: "loginctl enable-linger {{ rh_discovery_seapp_discovery_username }}"
+  changed_when: true
+
 - name: Pull Red Hat discovery images
   become: true
   become_user: "{{ rh_discovery_seapp_discovery_username }}"
