@@ -10,6 +10,14 @@
   ansible.builtin.command: "loginctl enable-linger {{ rh_discovery_seapp_discovery_username }}"
   changed_when: true
 
+- name: Log in to Red Hat registry
+  become: true
+  become_user: "{{ rh_discovery_seapp_discovery_username }}"
+  containers.podman.podman_login:
+    registry: registry.redhat.io
+    username: "{{ rh_discovery_seapp_discovery_registry_username }}"
+    password: "{{ rh_discovery_seapp_discovery_registry_password }}"
+    
 - name: Pull Red Hat discovery images
   become: true
   become_user: "{{ rh_discovery_seapp_discovery_username }}"
