@@ -16,14 +16,40 @@
 
 - name: Run discovery-installer
   become: false
-  become_user: lab-user
+  become_user: "{{ rh_discovery_seapp_discovery_username }}"
   ansible.builtin.expect:
     command: discovery-installer install
     responses:
-      (?i)password: "{{ common_password }}"
+      (?i)password: "{{ rh_discovery_seapp_discovery_password }}"
 
-# - name: Start discovery app as user service
-#   become: false
-#   command: systemctl --user start discovery-app
+- name: "Enable linger for the discovery user"
+  ansible.builtin.command: "loginctl enable-linger {{ rh_discovery_seapp_discovery_username }}"
+  become: true
+  changed_when: true
 
+- name: Get userinfo of RH Discovery user
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ rh_discovery_seapp_discovery_username }}"
+  register: _r_getent_passwd
 
+- name: Get Userid of RH Discovery user
+  set_fact:
+    _discovery_user_id: "{{ _r_getent_passwd.ansible_facts.getent_passwd[rh_discovery_seapp_discovery_username][1] }}"
+
+- name: Manage user systemd service with become
+  ansible.builtin.systemd:
+    name: podman.socket
+    state: started
+    enabled: true
+    scope: user
+  become: true
+  become_user: "{{ rh_discovery_seapp_discovery_username }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ _discovery_user_id }}"
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ _discovery_user_id }}/bus"
+
+- name: Start discovery app as user service
+  become: false
+  become_user: "{{ rh_discovery_seapp_discovery_username }}"
+  command: systemctl --user start discovery-app

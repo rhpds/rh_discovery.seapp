@@ -4,6 +4,8 @@
 # ----------------------------------------------------------------
 rh_discovery_seapp_discovery_registry_username: "{{ registry_credentials_username }}"
 rh_discovery_seapp_discovery_registry_password: "{{ registry_credentials_password }}"
+rh_discovery_seapp_discovery_username: "{{ student_name }}"
+rh_discovery_seapp_discovery_password: "{{ common_password }}"
 
 # ----------------------------------------------------------------
 # Red Hat Discovery pacakges list
