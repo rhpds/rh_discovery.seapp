@@ -5,6 +5,7 @@
     dest: "{{ rh_discovery_seapp_satellite_manifest_dest }}"
     mode: '0644'
     force: yes
+    force_basic_auth: true
     url_username: "{{ rh_discovery_seapp_satellite_manifest_url_username | default(omit) }}"
     url_password: "{{ rh_discovery_seapp_satellite_manifest_url_password | default(omit) }}"
 
