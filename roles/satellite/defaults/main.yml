@@ -44,3 +44,8 @@ rh_discovery_seapp_satellite_replace_manifest: false
 rh_discovery_seapp_satellite_manifest_url: "<CHANGEME>https://example.com/path/to/new_manifest.zip<CHANGEME>"
 rh_discovery_seapp_satellite_manifest_dest: "/tmp/new_manifest.zip"
 
+# ----------------------------------------------------------------
+# Variables: to sync repositories after manifest replacement
+# ----------------------------------------------------------------
+rh_discovery_seapp_satellite_sync_repos: false
+
