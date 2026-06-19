@@ -24,9 +24,46 @@
   ansible.builtin.include_tasks:
     file: manifest.yml
 
-- name: Refresh the manifest
+- name: Refresh the manifest or replace if expired
   when: not rh_discovery_seapp_satellite_replace_manifest | bool
-  ansible.builtin.command: >-
-    hammer subscription 
-    refresh-manifest
-    --organization="Default Organization"
+  block:
+    - name: Attempt to refresh the manifest
+      ansible.builtin.command: >-
+        hammer subscription
+        refresh-manifest
+        --organization="{{ rh_discovery_seapp_satellite_default_organization }}"
+      register: refresh_result
+      changed_when: true
+
+  rescue:
+    - name: Check if manifest is expired
+      ansible.builtin.set_fact:
+        manifest_expired: "{{ 'expired' in refresh_result.stderr | default('') }}"
+
+    - name: Fail if manifest URL not configured for auto-replacement
+      when:
+        - manifest_expired | bool
+        - rh_discovery_seapp_satellite_manifest_url is not defined or
+          rh_discovery_seapp_satellite_manifest_url == '<CHANGEME>https://example.com/path/to/new_manifest.zip<CHANGEME>'
+      ansible.builtin.fail:
+        msg: |
+          Manifest refresh failed because the manifest has expired.
+          To auto-replace the expired manifest, set:
+            rh_discovery_seapp_satellite_manifest_url: "https://your-manifest-url.zip"
+
+    - name: Replace expired manifest
+      when: manifest_expired | bool
+      ansible.builtin.include_tasks:
+        file: manifest.yml
+
+    - name: Sync repositories after manifest replacement
+      when:
+        - manifest_expired | bool
+        - rh_discovery_seapp_satellite_sync_repos | default(false) | bool
+      ansible.builtin.include_tasks:
+        file: sync_repos.yml
+
+    - name: Re-raise non-expiration errors
+      when: not manifest_expired | bool
+      ansible.builtin.fail:
+        msg: "{{ refresh_result.stderr | default('Manifest refresh failed') }}"
